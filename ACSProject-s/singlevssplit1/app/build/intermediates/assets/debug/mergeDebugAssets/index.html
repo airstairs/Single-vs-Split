@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Android Touch & Web Refresher</title>
+    <style>
+        :root {
+            --primary: #6200ee;
+            --primary-variant: #3700b3;
+            --secondary: #03dac6;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --on-surface: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --error: #cf6679;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--on-surface);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--surface);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #2c2c2c;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: var(--surface);
+            overflow-x: auto;
+            border-bottom: 1px solid #2c2c2c;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+            background-color: rgba(3, 218, 198, 0.05);
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .section {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #2c2c2c;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        code, pre {
+            background-color: #0d0d0d;
+            color: #a5d6ff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+
+        pre {
+            padding: 12px;
+            overflow-x: auto;
+            margin: 8px 0;
+            border: 1px solid #2a2a2a;
+        }
+
+        /* Playground Interactive Elements */
+        .playground-box {
+            width: 100%;
+            height: 180px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #444;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .touch-target {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: absolute;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: background-color 0.2s;
+        }
+
+        .touch-target:active {
+            background-color: var(--primary-variant);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 120px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .log-panel {
+            background-color: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 10px;
+            height: 100px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #3fb950;
+        }
+
+        /* Checklist styles */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #2c2c2c;
+            font-size: 0.95krem;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--secondary);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Android Web Refresher</h1>
+        <span id="connection-status" style="font-size: 0.75rem; color: #3fb950;">● Ready</span>
+    </header>
+
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('html-css')">1. Layout & Touch CSS</button>
+        <button class="tab-btn" onclick="switchTab('dom')">2. DOM & Events</button>
+        <button class="tab-btn" onclick="switchTab('touch')">3. Touchscreen API</button>
+        <button class="tab-btn" onclick="switchTab('checklist')">4. Checklist</button>
+    </nav>
+
+    <main>
+        <!-- TAB 1: HTML & CSS for Mobile -->
+        <section id="html-css" class="section active">
+            <div class="card">
+                <h2>Viewport Meta Tag</h2>
+                <p>Essential for Android web views and mobile browsers to prevent desktop scaling behavior.</p>
+                <pre>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"&gt;</pre>
+            </div>
+
+            <div class="card">
+                <h2>Mobile CSS Best Practices</h2>
+                <p>Optimize touch target sizes (minimum 48px by 48px) and eliminate annoying tap highlights.</p>
+                <pre>/* Eliminate blue tap highlight box on Android */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure buttons are thumb-friendly */
+button, .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+}</pre>
+            </div>
+        </section>
+
+        <!-- TAB 2: DOM & JS Essentials -->
+        <section id="dom" class="section">
+            <div class="card">
+                <h2>DOM Selection & Manipulation</h2>
+                <p>Quick reminder of core methods used to bind elements and change states dynamically.</p>
+                <pre>const box = document.getElementById('box');
+const items = document.querySelectorAll('.item');
+
+// Modify text & styles safely
+box.textContent = "Updated via DOM!";
+box.style.backgroundColor = "#6200ee";</pre>
+            </div>
+
+            <div class="card">
+                <h2>Live DOM Playground</h2>
+                <p>Tap the button below to alter elements in real-time.</p>
+                <div id="dom-target-box" style="padding: 12px; background: #2a2a2a; border-radius: 6px; margin-bottom: 10px; text-align: center;">
+                    Watch me change!
+                </div>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="triggerDomChange()">Change Text</button>
+                    <button class="action-btn" style="background-color: #333;" onclick="resetDomChange()">Reset</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Android Touchscreen Programming -->
+        <section id="touch" class="section">
+            <div class="card">
+                <h2>Touch Events API</h2>
+                <p>Unlike mouse events, touch events track multiple fingers using <code>touchstart</code>, <code>touchmove</code>, and <code>touchend</code>.</p>
+                <div class="playground-box" id="playground">
+                    <div class="touch-target" id="draggableBall">Drag Me</div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <p style="margin-bottom: 4px;">Live Event Log:</p>
+                    <div class="log-panel" id="logPanel">Ready for touch input...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Mobile Checklist -->
+        <section id="checklist" class="section">
+            <div class="card">
+                <h2>Android Readiness Checklist</h2>
+                <p>Verify your setup before building your standalone APK or PWA wrapper.</p>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">Included viewport meta tag with device-width</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Set touch-action: none on custom drag areas</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">Prevented unwanted mobile text selection (user-select: none)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4">
+                    <label for="check4">Tested with real device multi-touch gestures</label>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // DOM Playground Script
+        const targetBox = document.getElementById('dom-target-box');
+        let counter = 1;
+        function triggerDomChange() {
+            targetBox.textContent = `DOM Updated ${counter} time(s)!`;
+            targetBox.style.color = counter % 2 === 0 ? '#03dac6' : '#cf6679';
+            counter++;
+        }
+        function resetDomChange() {
+            targetBox.textContent = "Watch me change!";
+            targetBox.style.color = '#e0e0e0';
+            counter = 1;
+        }
+
+        // Touch Interaction Logic
+        const ball = document.getElementById('draggableBall');
+        const playground = document.getElementById('playground');
+        const logPanel = document.getElementById('logPanel');
+
+        function logMessage(msg) {
+            const time = new Date().toLocaleTimeString();
+            logPanel.innerHTML += `[${time}] ${msg}<br>`;
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        let isDragging = false;
+        let startX, startY;
+        let initialLeft = 50, initialTop = 50;
+
+        ball.style.left = 'calc(50% - 40px)';
+        ball.style.top = 'calc(50% - 40px)';
+
+        ball.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            
+            const rect = ball.getBoundingClientRect();
+            const parentRect = playground.getBoundingClientRect();
+            
+            initialLeft = rect.left - parentRect.left;
+            initialTop = rect.top - parentRect.top;
+            
+            logMessage(`touchstart: X=${Math.round(startX)}, Y=${Math.round(startY)}`);
+            e.preventDefault();
+        }, { passive: false });
+
+        playground.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            const dx = touch.clientX - startX;
+            const dy = touch.clientY - startY;
+
+            let newLeft = initialLeft + dx;
+            let newTop = initialTop + dy;
+
+            // Boundary constraints
+            newLeft = Math.max(0, Math.min(newLeft, playground.clientWidth - ball.clientWidth));
+            newTop = Math.max(0, Math.min(newTop, playground.clientHeight - ball.clientHeight));
+
+            ball.style.left = `${newLeft}px`;
+            ball.style.top = `${newTop}px`;
+            
+            e.preventDefault();
+        }, { passive: false });
+
+        ball.addEventListener('touchend', (e) => {
+            if (isDragging) {
+                isDragging = false;
+                logMessage('touchend: Drag ended successfully.');
+            }
+        });
+    </script>
+</body>
+</html>

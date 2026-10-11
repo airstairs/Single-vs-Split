@@ -1,0 +1,20 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/AndroidIDEProjects/singlevssplit2/app/src/main/AndroidManifest.xml",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 963,
+          "line": 24
+        },
+        "start": {
+          "column": 0,
+          "index": 963,
+          "line": 24
+        }
+      }
+    }
+  ],
+  "selectedFile": "/storage/emulated/0/AndroidIDEProjects/singlevssplit2/app/src/main/AndroidManifest.xml"
+}

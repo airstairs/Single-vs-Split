@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>JS & Mobile Touch Refresher</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="app-header">
+        <button id="menu-toggle" class="icon-btn" aria-label="Toggle Navigation">☰</button>
+        <h1>Touch & DOM Refresher</h1>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="sidebar">
+            <div class="nav-title">Topics</div>
+            <ul id="nav-list" class="nav-list">
+                <!-- Navigation items injected dynamically by app.js -->
+            </ul>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main class="content-area">
+            <header class="module-header">
+                <h2 id="module-title">Select a Module</h2>
+                <p id="module-desc">Choose a topic from the menu to start refreshing.</p>
+            </header>
+
+            <section class="grid-layout">
+                <!-- Code Sample Card -->
+                <article class="card">
+                    <h3>Code Snippet & Concepts</h3>
+                    <pre><code id="code-snippet">// Select a module to display code</code></pre>
+                </article>
+
+                <!-- Interactive Playground Sandbox Card -->
+                <article class="card">
+                    <h3>Live Sandbox</h3>
+                    <div id="sandbox-container" class="sandbox-box">
+                        <p class="placeholder-text">Interactive elements will appear here.</p>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Output / Debug Console -->
+            <section class="card console-card">
+                <h3>Event & Debug Output</h3>
+                <div id="console-output" class="console-box">> System ready. Touch or click controls above.</div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modular JavaScript Files -->
+    <script src="js/content.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
